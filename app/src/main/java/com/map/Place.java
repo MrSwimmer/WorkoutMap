@@ -5,8 +5,9 @@ package com.map;
  */
 
 public class Place {
-    public String name;
+
     public double lat, lan;
+    public String name;
     public Place() {
 
     }

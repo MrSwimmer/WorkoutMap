@@ -44,6 +44,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     ImageView ThisLoc;
     private DatabaseReference mDatabase;
     boolean onCheckPressed = false;
+    int num=1;
     ArrayList<Place> Places = new ArrayList<Place>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 onCheckPressed=true;
             }
         });
-
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -74,8 +74,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .position(new LatLng(place.lan, place.lat))
                     .title(place.name));
             Log.i("fbase", String.valueOf(place.lan+" "+place.lat));
+            if(i==Places.size()-1){
+                Toast.makeText(getApplicationContext(), "Карта готова!", Toast.LENGTH_SHORT).show();
+            }
         }
-        Toast.makeText(getApplicationContext(), "Карта готова!", Toast.LENGTH_SHORT).show();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
@@ -85,11 +87,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(final LatLng latLng){
                 if(onCheckPressed){
-//                    mMap.addMarker(new MarkerOptions()
-//                            .position(latLng)
-//                            .title("YES!"));
-
-                    //Toast.makeText(getApplicationContext(), "Выберите вид", Toast.LENGTH_SHORT).show();
                     onCheckPressed=false;
                     final EditText edittext = new EditText(getApplicationContext());
                     edittext.setHint("Название");
@@ -97,27 +94,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     alert.setMessage("Введите информативное название");
                     alert.setTitle("Новая площадка");
                     alert.setView(edittext);
-
                     alert.setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             if(edittext.getText().toString()!=null){
-                                Place place = new Place(edittext.getText().toString(), latLng.latitude, latLng.latitude);
-                                mDatabase.child("test/"+Places.size()).setValue(place);
-                                Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение", Toast.LENGTH_SHORT).show();
+                                Place place = new Place(edittext.getText().toString(), latLng.longitude, latLng.latitude);
+                                String ll = place.lat+","+place.lan;
+                                String lli = ll.replace('.',',');
+                                mDatabase.child("test/"+ lli).setValue(place);
+                                Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                     alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // what ever you want to do with No option.
                         }
                     });
                     alert.show();
-//                    String geoUriString = "google.streetview:cbll="+latLng.latitude+","+latLng.longitude+"&cbp=1,99.56,,1,1.0&mz=19";
-//                    Uri geoUri = Uri.parse(geoUriString);
-//                    Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-//                    startActivity(map);
-
                 }
             }
         });
