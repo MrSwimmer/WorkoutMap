@@ -1,82 +1,125 @@
 package com.map;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    Button MyLoc;
-
+    ImageView ThisLoc;
+    private DatabaseReference mDatabase;
+    boolean onCheckPressed = false;
+    ArrayList<Place> Places = new ArrayList<Place>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Places = Main.places;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        MyLoc = (Button) findViewById(R.id.myloc);
-        MyLoc.setOnClickListener(new View.OnClickListener() {
+        ThisLoc = (ImageView) findViewById(R.id.plus);
+        ThisLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(MapsActivity.this, SupportLocation.class);
-//                startActivity(i);
-                LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-                Criteria criteria = new Criteria();
-                String provider = service.getBestProvider(criteria, false);
-                if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                Location location = service.getLastKnownLocation(provider);
-                LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
-                mMap.addMarker(new MarkerOptions()
-                        .position(userLocation)
-                        .title("Hello world"));
-//                Location myloc = mMap.getMyLocation();
-//                LatLng mylatlng = new LatLng(myloc.getLatitude(), myloc.getLongitude());
-//                mMap.moveCamera(CameraUpdateFactory.newLatLng(mylatlng));
+                Toast.makeText(getApplicationContext(), "Выберите место на карте!", Toast.LENGTH_SHORT).show();
+                onCheckPressed=true;
             }
         });
-    }
 
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Log.i("fbase", String.valueOf(Places.size()));
+        for(int i=0; i<Places.size(); i++){
+            Place place = Places.get(i);
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(place.lan, place.lat))
+                    .title(place.name));
+            Log.i("fbase", String.valueOf(place.lan+" "+place.lat));
+        }
+        Toast.makeText(getApplicationContext(), "Карта готова!", Toast.LENGTH_SHORT).show();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
+            @Override
+            public void onMapClick(final LatLng latLng){
+                if(onCheckPressed){
+//                    mMap.addMarker(new MarkerOptions()
+//                            .position(latLng)
+//                            .title("YES!"));
+
+                    //Toast.makeText(getApplicationContext(), "Выберите вид", Toast.LENGTH_SHORT).show();
+                    onCheckPressed=false;
+                    final EditText edittext = new EditText(getApplicationContext());
+                    edittext.setHint("Название");
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+                    alert.setMessage("Введите информативное название");
+                    alert.setTitle("Новая площадка");
+                    alert.setView(edittext);
+
+                    alert.setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            if(edittext.getText().toString()!=null){
+                                Place place = new Place(edittext.getText().toString(), latLng.latitude, latLng.latitude);
+                                mDatabase.child("test/"+Places.size()).setValue(place);
+                                Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // what ever you want to do with No option.
+                        }
+                    });
+                    alert.show();
+//                    String geoUriString = "google.streetview:cbll="+latLng.latitude+","+latLng.longitude+"&cbp=1,99.56,,1,1.0&mz=19";
+//                    Uri geoUri = Uri.parse(geoUriString);
+//                    Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
+//                    startActivity(map);
+
+                }
+            }
+        });
     }
 }

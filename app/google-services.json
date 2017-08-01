@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "738641647719",
+    "firebase_url": "https://workout-map-bb631.firebaseio.com",
+    "project_id": "workout-map-bb631",
+    "storage_bucket": "workout-map-bb631.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738641647719:android:acdb0209ef7d7caf",
+        "android_client_info": {
+          "package_name": "com.map"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738641647719-ne1ln2iarc4nhqf8n2k8mkq6oaa08c2a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.map",
+            "certificate_hash": "70522e94947bd5ffa67c11b1c811439826fbe45e"
+          }
+        },
+        {
+          "client_id": "738641647719-8gjv774vkhc1hcd4kep2iighm0288llk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKc-y1cHD0Q1sk1nMocDwweIi3DvPpUzc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738641647719-8gjv774vkhc1hcd4kep2iighm0288llk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
