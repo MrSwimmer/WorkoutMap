@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,8 +99,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onClick(DialogInterface dialog, int whichButton) {
                             if(edittext.getText().toString()!=null){
                                 Place place = new Place(edittext.getText().toString(), latLng.longitude, latLng.latitude);
+                                String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
                                 String ll = place.lat+","+place.lan;
-                                String lli = ll.replace('.',',');
+                                String lli = formattedDouble.replace('.',',');
                                 mDatabase.child("test/"+ lli).setValue(place);
                                 Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
                             }
