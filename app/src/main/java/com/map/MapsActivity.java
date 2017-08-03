@@ -111,9 +111,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void onClick(DialogInterface dialog, int whichButton) {
                         }
                     });
+
                     alert.show();
                 }
             }
         });
+    }
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();  // optional depending on your needs
+        Intent i = new Intent(MapsActivity.this, Main.class);
+        startActivity(i);
+        overridePendingTransition(0,0);
     }
 }

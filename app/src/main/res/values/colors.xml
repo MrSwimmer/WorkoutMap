@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="workout">#F44336</color>
+    <color name="set">#9C27B0</color>
+    <color name="bath">#4CAF50</color>
+    <color name="train">#FF9800</color>
+    <color name="halls">#8BC34A</color>
+    <color name="fit">#673AB7</color>
 </resources>

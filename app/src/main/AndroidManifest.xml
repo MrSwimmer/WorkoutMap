@@ -30,9 +30,12 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="Карта"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Main">
+        <activity android:name=".Main"
+                  android:label="Workout Map"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

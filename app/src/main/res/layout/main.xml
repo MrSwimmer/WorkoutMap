@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_height="match_parent"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_height="match_parent"
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+           >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
+
                   android:orientation="vertical">
 
         <LinearLayout
@@ -12,15 +16,26 @@
             android:layout_height="240dp"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/work"
+            <LinearLayout
+                android:id="@+id/workout"
                 android:layout_width="240dp"
                 android:layout_height="240dp"
-                android:text="Workout площадки"
-                android:layout_gravity="center"
                 android:gravity="center"
-                android:background="@android:color/holo_blue_bright">
-            </TextView>
+                android:onClick="work"
+                android:visibility="invisible">
+                <TextView
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:background="@color/workout"
+                    android:gravity="center"
+                    android:text="Workout площадки"
+                    >
+                </TextView>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -28,24 +43,36 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/set"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:background="@android:color/holo_green_light"
-                    android:orientation="vertical">
+                    android:background="@color/set"
+                    android:gravity="center"
+                    android:onClick="settings"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Настройки"/>
 
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:onClick="pools"
-                    android:gravity="center"
+                    android:id="@+id/pools"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/holo_red_dark"
-                    android:orientation="vertical">
+                    android:background="@color/bath"
+                    android:gravity="center"
+                    android:onClick="pools"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
                     <TextView
                         android:id="@+id/textView"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Бассейны"/>
@@ -65,25 +92,54 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/halls"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:background="?android:attr/statusBarColor"
-                    android:orientation="vertical">
+                    android:background="@color/halls"
+                    android:gravity="center"
+                    android:onClick="halls"
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    tools:targetApi="lollipop">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Манежи"/>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/fitness"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?android:attr/colorControlActivated"
-                    android:orientation="vertical">
+                    android:background="@color/fit"
+                    android:gravity="center"
+                    android:onClick="fitness"
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    tools:targetApi="lollipop">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Фитнес"/>
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/train"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
-                android:background="@android:color/holo_green_dark"
-                android:orientation="vertical">
+                android:background="@color/train"
+                android:gravity="center"
+                android:onClick="train"
+                android:orientation="vertical"
+                android:visibility="invisible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Тренажерные залы"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -94,25 +150,127 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/fight"
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:background="@android:color/holo_red_light"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:onClick="fight"
+                android:orientation="vertical"
+                android:visibility="invisible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Единоборства"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/foot"
                 android:layout_width="120dp"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_orange_light"
-                android:orientation="vertical">
+                android:background="@color/bath"
+                android:gravity="center"
+                android:onClick="foot"
+                android:orientation="vertical"
+                android:visibility="invisible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Футбол"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/tennis"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/holo_blue_light"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:onClick="tennis"
+                android:orientation="vertical"
+                android:visibility="invisible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Теннис"/>
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/volley"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                android:gravity="center"
+                android:onClick="volley"
+                android:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/volley"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:background="@color/workout"
+                    android:gravity="center"
+                    android:onClick="volley"
+                    android:text="Воллейбол">
+                </TextView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/bask"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@color/set"
+                    android:gravity="center"
+                    android:onClick="bask"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Баскетбол"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/velo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/bath"
+                    android:gravity="center"
+                    android:onClick="velo"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Велоспорт"/>
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
