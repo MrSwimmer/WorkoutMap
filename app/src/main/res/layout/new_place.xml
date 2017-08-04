@@ -3,25 +3,55 @@
               style="@style/Base.AlertDialog.AppCompat"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_margin="10dp"
               android:orientation="vertical"
               android:theme="@style/AppTheme">
 
-    <ImageView
-        android:id="@+id/imageView"
+    <TextView
+        android:id="@+id/textView5"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="#FFFFBB33"
-        android:contentDescription="@string/app_name"
-        android:scaleType="center"/>
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:padding="10dp"
+        android:text="Новая площадка"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="24sp"/>
 
     <EditText
-        android:id="@+id/username"
-        android:layout_width="164dp"
+        android:id="@+id/name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_margin="5dp"
         android:hint="Название"
         android:inputType="textEmailAddress"/>
+
+    <EditText
+        android:id="@+id/about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:hint="Описание"
+        android:inputType="textEmailAddress"/>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Оценка"
+        android:textSize="18sp"/>
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/Widget.AppCompat.RatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:elevation="0dp"
+        android:isIndicator="false"
+        android:rating="5"
+        android:stepSize="1"/>
+
 </LinearLayout>

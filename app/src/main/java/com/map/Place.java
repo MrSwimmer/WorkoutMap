@@ -7,11 +7,19 @@ package com.map;
 public class Place {
 
     public double lat, lan;
-    public String name;
+    public String name, about;
+    public int rating;
     public Place() {
 
     }
     public Place(String name, double lat, double lan) {
+        this.name = name;
+        this.lat = lat;
+        this.lan = lan;
+    }
+    public Place(String name, String about, int rating, double lat, double lan) {
+        this.rating=rating;
+        this.about=about;
         this.name = name;
         this.lat = lat;
         this.lan = lan;

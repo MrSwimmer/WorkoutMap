@@ -30,13 +30,13 @@ import java.util.ArrayList;
 
 import static android.R.attr.animation;
 
-public class Main extends AppCompatActivity {
+public class Main extends Activity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("realese");
     public static final ArrayList<Place> places = new ArrayList<Place>();
-    LinearLayout Workout, Settings, Pools, Halls, Fitness, Train, Fight, Plays, Tennis;
-    ObjectAnimator an0, an1, an2, an3, an4, an5, an6, an7, an8;
+    LinearLayout Workout, Settings, Pools, Halls, Fitness, Train, Fight, Tennis, Foot, Basket, Volley, Velo;
+    ObjectAnimator an0, an1, an2, an3, an4, an5, an6, an7, an8, an9, an10, an11;
     public static ObjectAnimator[] animations;
     public static LinearLayout[] layouts;
     int count = 0;
@@ -52,10 +52,13 @@ public class Main extends AppCompatActivity {
         Fitness = (LinearLayout) findViewById(R.id.fitness);
         Train = (LinearLayout) findViewById(R.id.train);
         Fight = (LinearLayout) findViewById(R.id.fight);
-        Plays = (LinearLayout) findViewById(R.id.plays);
         Tennis = (LinearLayout) findViewById(R.id.tennis);
-        layouts = new LinearLayout[]{Train,  Settings, Pools, Workout, Halls, Fight, Tennis, Fitness, Plays};
-        animations = new ObjectAnimator[]{an0, an1, an2, an3, an4, an5, an6, an7, an8};
+        Foot = (LinearLayout) findViewById(R.id.foot);
+        Basket = (LinearLayout) findViewById(R.id.bask);
+        Volley = (LinearLayout) findViewById(R.id.volley);
+        Velo = (LinearLayout) findViewById(R.id.velo);
+        layouts = new LinearLayout[]{Train,  Settings, Pools, Workout, Halls, Fight, Tennis, Fitness, Foot, Volley, Basket, Velo};
+        animations = new ObjectAnimator[]{an0, an1, an2, an3, an4, an5, an6, an7, an8, an9, an10, an11 };
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -69,8 +72,6 @@ public class Main extends AppCompatActivity {
 
             }
         });
-//        rot();
-//        count=0;
     }
     private void rot(){
         animations[count] = ObjectAnimator.ofFloat(layouts[count], "rotationY", 270f, 360f);
@@ -84,7 +85,7 @@ public class Main extends AppCompatActivity {
             public void run() {
                 //animations[count].end();
                 count++;
-                if(count==9){
+                if(count==12){
                     rotend();
                     return;
                 }
@@ -107,7 +108,7 @@ public class Main extends AppCompatActivity {
             public void run() {
                 //animations[count].end();
                 count++;
-                if(count==9){
+                if(count==12){
                     rotend();
                     return;
                 }
@@ -135,101 +136,78 @@ public class Main extends AppCompatActivity {
             public void run() {
                 startActivity(i);
                 overridePendingTransition(0,0);
-                finish();
             }
-        }, 2000);
+        }, 2700);
+    }
+    private void hand(String geo){
+        Uri geoUri = Uri.parse(geo);
+        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(map);
+                overridePendingTransition(0,0);
+            }
+        }, 2700);
     }
     public void pools(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=бассейны рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
     public void halls(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=манежи рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
     public void fitness(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=фитнес рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
     public void train(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=Тренажерные залы рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
     public void fight(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=единоборства рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
     public void tennis(View view){
         count=0;
         rot2();
         String geoUriString = "geo:0,0?q=теннис рядом со мной&z=4";
-        Uri geoUri = Uri.parse(geoUriString);
-        final Intent map = new Intent(Intent.ACTION_VIEW, geoUri);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(map);
-                overridePendingTransition(0,0);
-                //finish();
-            }
-        }, 2000);
+        hand(geoUriString);
     }
-
+    public void foot(View view){
+        count=0;
+        rot2();
+        String geoUriString = "geo:0,0?q=футболл рядом со мной&z=4";
+        hand(geoUriString);
+    }
+    public void volley(View view){
+        count=0;
+        rot2();
+        String geoUriString = "geo:0,0?q=воллейбол рядом со мной&z=4";
+        hand(geoUriString);
+    }
+    public void bask(View view){
+        count=0; rot2();
+        String geoUriString = "geo:0,0?q=баскетбол рядом со мной&z=4";
+        hand(geoUriString);
+    }
+    public void velo(View view){
+        count=0; rot2();
+        String geoUriString = "geo:0,0?q=велоспорт рядом со мной&z=4";
+        hand(geoUriString);
+    }
     @Override
     protected void onResume() {
         count=0;
