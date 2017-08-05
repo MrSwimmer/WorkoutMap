@@ -8,7 +8,7 @@ public class Place {
 
     public double lat, lan;
     public String name, about;
-    public int rating;
+    public float rating;
     public Place() {
 
     }
@@ -17,7 +17,7 @@ public class Place {
         this.lat = lat;
         this.lan = lan;
     }
-    public Place(String name, String about, int rating, double lat, double lan) {
+    public Place(String name, String about, float rating, double lat, double lan) {
         this.rating=rating;
         this.about=about;
         this.name = name;

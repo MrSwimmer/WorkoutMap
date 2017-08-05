@@ -208,6 +208,9 @@ public class Main extends Activity {
         String geoUriString = "geo:0,0?q=велоспорт рядом со мной&z=4";
         hand(geoUriString);
     }
+    public void set(View view){
+
+    }
     @Override
     protected void onResume() {
         count=0;

@@ -1,43 +1,28 @@
 package com.map;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -54,17 +39,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     ImageView ThisLoc;
     EditText name, about;
-    RatingBar rating;
-    View layout;
+    RatingBar rating, newrating;
+    View layout, newlayout;
     LayoutInflater inflater;
+    LayoutInflater newinflater;
     AlertDialog.Builder builder;
+    AlertDialog.Builder newbuilder;
     private DatabaseReference mDatabase;
     boolean onCheckPressed = false;
+    int rat=5;
     int num=1;
+    ArrayList<String> Ids = new ArrayList<String>();
     ArrayList<Place> Places = new ArrayList<Place>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Ids.clear();
         setContentView(R.layout.activity_maps);
         Places = Main.places;
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -86,6 +76,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         name = (EditText) layout.findViewById(R.id.name);
         about = (EditText) layout.findViewById(R.id.about);
         rating = (RatingBar) layout.findViewById(R.id.ratingBar);
+        newinflater = getLayoutInflater();
+        newlayout = inflater.inflate(R.layout.new_mark, null);
+        newbuilder = new AlertDialog.Builder(this);
+        newbuilder.setView(newlayout);
+        newrating = (RatingBar) newlayout.findViewById(R.id.newrating);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -118,16 +113,75 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Log.i("fbase", String.valueOf(Places.size()));
+        long start = System.currentTimeMillis();
         for(int i=0; i<Places.size(); i++){
-            Place place = Places.get(i);
+            final Place place = Places.get(i);
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(place.lan, place.lat))
-                    .title(place.name));
+                    .title(place.name)
+                    .snippet(place.about));
+
             Log.i("fbase", String.valueOf(place.lan+" "+place.lat));
             if(i==Places.size()-1){
                 Toast.makeText(getApplicationContext(), "Карта готова!", Toast.LENGTH_SHORT).show();
             }
         }
+        long finish = System.currentTimeMillis();
+        Log.i("fbase", finish-start+"");
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                for(int i=0; i<Places.size(); i++){
+                    final Place place = Places.get(i);
+                    String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
+                    double lan = marker.getPosition().latitude;
+                    double lat = marker.getPosition().longitude;
+                    final String latLng = new DecimalFormat("#0.00000").format(lat)+new DecimalFormat("#0.00000").format(lan);
+                    Log.i("map", formattedDouble);
+                    Log.i("map", latLng);
+                    if(formattedDouble.equals(latLng)){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        builder.setTitle(place.name)
+                                .setMessage(place.about+"\nРейтинг: "+place.rating)
+                                .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .setNegativeButton("Добавить свою оценку", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
+                                                String Mail = email.replace('.', ',');
+                                                String lli = formattedDouble.replace('.',',');
+                                                Log.i("newrat", newrating.getRating()+" "+place.rating);
+                                                mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        newbuilder.create();
+                                        newbuilder.show();
+                                        dialog.cancel();
+
+                                    }
+                                });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+                    return false;
+            }
+        });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             return;
@@ -138,17 +192,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapClick(final LatLng latLng){
                 if(onCheckPressed){
                     onCheckPressed=false;
+
                     builder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Place place = new Place(name.getText().toString(), about.getText().toString(), rating.getNumStars(), latLng.longitude, latLng.latitude);
+                            Place place = new Place(name.getText().toString(), about.getText().toString(), rating.getRating(), latLng.longitude, latLng.latitude);
                             String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
                             String Mail = email.replace('.', ',');
                             String lli = formattedDouble.replace('.',',');
                             mDatabase.child("test/"+ lli).setValue(place);
                             if(Mail!="noname")
-                                mDatabase.child("users/"+Mail+"/"+lli).setValue(rating.getNumStars());
+                                mDatabase.child("users/"+Mail+"/"+lli).setValue(rating.getRating());
                             Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
+
                             dialog.cancel();
                         }
                     });
