@@ -208,8 +208,17 @@ public class Main extends Activity {
         String geoUriString = "geo:0,0?q=велоспорт рядом со мной&z=4";
         hand(geoUriString);
     }
-    public void set(View view){
-
+    public void settings(View view){
+        final Intent i = new Intent(Main.this, Settings.class);
+        count=0;
+        rot2();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(i);
+                overridePendingTransition(0,0);
+            }
+        }, 2700);
     }
     @Override
     protected void onResume() {

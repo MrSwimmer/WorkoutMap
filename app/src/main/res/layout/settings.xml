@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_line"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/buttonMark"
+            style="@style/Widget.AppCompat.ListMenuView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+
+            android:background="@drawable/bottom_line"
+            android:padding="15dp"
+            android:paddingBottom="15sp"
+            android:paddingTop="15dp"
+            android:text="Оценить нас в Google Play"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bottom_line"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/textView"
+                style="@style/Widget.AppCompat.ListMenuView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Версия приложения"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="v2.2.pro"
+                android:textSize="17sp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/buttonVer"
+            style="@style/Widget.AppCompat.ListView.Menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/bottom_line"
+            android:padding="15dp"
+            android:paddingBottom="15sp"
+            android:paddingTop="15dp"
+
+            android:text="О версии"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bottom_line"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:id="@+id/EnterRegBut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Вход / Регистрация"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Войдите или зарегестрируйтесь в ОСМ"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

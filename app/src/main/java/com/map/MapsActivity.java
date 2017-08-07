@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -46,6 +48,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     AlertDialog.Builder builder;
     AlertDialog.Builder newbuilder;
     private DatabaseReference mDatabase;
+    private DatabaseReference mFindBase;
     boolean onCheckPressed = false;
     int rat=5;
     int num=1;
@@ -58,6 +61,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         Places = Main.places;
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -151,27 +155,53 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 })
                                 .setNegativeButton("Добавить свою оценку", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
-                                                String Mail = email.replace('.', ',');
-                                                String lli = formattedDouble.replace('.',',');
-                                                Log.i("newrat", newrating.getRating()+" "+place.rating);
-                                                mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
-                                                dialog.cancel();
-                                            }
-                                        });
-                                        newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.cancel();
-                                            }
-                                        });
-                                        newbuilder.create();
-                                        newbuilder.show();
-                                        dialog.cancel();
+                                    public void onClick(final DialogInterface dialog, int which) {
+                                                if (user != null) {
+                                                    String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
+                                                    final String Mail = email.replace('.', ',');
+                                                    final String lli = formattedDouble.replace('.',',');
+                                                    mFindBase = FirebaseDatabase.getInstance().getReference("users/"+Mail);
+                                                    mFindBase.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                                                String value = dataSnapshot.getValue(String.class);
+                                                                if(value==lli){
+                                                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
+                                                                    dialog.cancel();
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+                                                    newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+
+                                                            Log.i("newrat", newrating.getRating()+" "+place.rating);
+                                                            mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
+                                                            mDatabase.child("users/"+Mail+"/"+lli+"/rating").setValue(lli);
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+                                                    newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+                                                    newbuilder.create();
+                                                    newbuilder.show();
+                                                } else {
+                                                    // User is signed out
+                                                    Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
+                                                    dialog.cancel();
+                                                }
+                                                // ...
 
                                     }
                                 });
