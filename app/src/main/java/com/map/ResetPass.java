@@ -19,10 +19,11 @@ public class ResetPass extends AppCompatActivity {
     EditText forgemail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reset_pass);
 
         forgemail = (EditText) findViewById(R.id.forgetmail);
-        setContentView(R.layout.activity_reset_pass);
-        super.onCreate(savedInstanceState);
+
     }
     public void resetPass(View view){
         if(forgemail.getText()!=null){

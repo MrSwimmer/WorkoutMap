@@ -2,6 +2,7 @@ package com.map;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,7 +37,9 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
     FirebaseUser user;
+    public static final ArrayList<String> places = new ArrayList<String>();
     String email;
+    RelativeLayout mainrel;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleMap mMap;
@@ -52,16 +56,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean onCheckPressed = false;
     int rat=5;
     int num=1;
+    boolean repeatPlace;
     ArrayList<String> Ids = new ArrayList<String>();
     ArrayList<Place> Places = new ArrayList<Place>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Ids.clear();
+        repeatPlace = false;
         setContentView(R.layout.activity_maps);
         Places = Main.places;
+        mainrel = (RelativeLayout) findViewById(R.id.mainrel);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -76,14 +82,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         inflater = getLayoutInflater();
         layout = inflater.inflate(R.layout.new_place, null);
         builder = new AlertDialog.Builder(this);
-        builder.setView(layout);
         name = (EditText) layout.findViewById(R.id.name);
         about = (EditText) layout.findViewById(R.id.about);
         rating = (RatingBar) layout.findViewById(R.id.ratingBar);
         newinflater = getLayoutInflater();
-        newlayout = inflater.inflate(R.layout.new_mark, null);
+        newlayout = newinflater.inflate(R.layout.new_mark, null);
         newbuilder = new AlertDialog.Builder(this);
-        newbuilder.setView(newlayout);
         newrating = (RatingBar) newlayout.findViewById(R.id.newrating);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -117,7 +121,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Log.i("fbase", String.valueOf(Places.size()));
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         for(int i=0; i<Places.size(); i++){
             final Place place = Places.get(i);
             mMap.addMarker(new MarkerOptions()
@@ -130,11 +134,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(getApplicationContext(), "Карта готова!", Toast.LENGTH_SHORT).show();
             }
         }
-        long finish = System.currentTimeMillis();
+        final long finish = System.currentTimeMillis();
         Log.i("fbase", finish-start+"");
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
             @Override
             public boolean onMarkerClick(Marker marker) {
+                newbuilder.setView(newlayout);
                 for(int i=0; i<Places.size(); i++){
                     final Place place = Places.get(i);
                     String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
@@ -143,6 +149,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     final String latLng = new DecimalFormat("#0.00000").format(lat)+new DecimalFormat("#0.00000").format(lan);
                     Log.i("map", formattedDouble);
                     Log.i("map", latLng);
+                    //String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
+                    final String Mail = email.replace('.', ',');
+                    final String lli = formattedDouble.replace('.',',');
+
+                    mFindBase = FirebaseDatabase.getInstance().getReference("users/"+Mail+"/");
+                    mFindBase.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
+                                //Ids.add(dataSnapshot.child().getValue(String.class))
+                                String value = singleSnapshot.getValue(String.class);
+                                Log.i("testrepeat", value);
+                                places.add(value);
+//
+                            }
+                            for(int i=0; i<places.size(); i++){
+                                //Log.i("testrepeat", places.get(i));
+                                if(places.get(i).equals(lli)){
+                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
+                                    repeatPlace=true;
+                                    break;
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     if(formattedDouble.equals(latLng)){
                         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                         builder.setTitle(place.name)
@@ -156,50 +191,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 .setNegativeButton("Добавить свою оценку", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(final DialogInterface dialog, int which) {
-                                                if (user != null) {
-                                                    String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
-                                                    final String Mail = email.replace('.', ',');
-                                                    final String lli = formattedDouble.replace('.',',');
-                                                    mFindBase = FirebaseDatabase.getInstance().getReference("users/"+Mail);
-                                                    mFindBase.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                                            for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                                                                String value = dataSnapshot.getValue(String.class);
-                                                                if(value==lli){
-                                                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
-                                                                    dialog.cancel();
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
+                                        if (user != null) {
+                                            if(!repeatPlace){
+                                                newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Log.i("newrat", newrating.getRating()+" "+place.rating);
+                                                        mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
+                                                        mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
+//                                                            mainrel.removeView(layout);
+//                                                            mainrel.removeView(newlayout);
+                                                        dialog.cancel();
+                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+                                                        startActivity(i);
+                                                        finish();
+                                                    }
+                                                });
+                                                newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+                                                        startActivity(i);
+                                                        finish();
+                                                    }
+                                                });
 
-                                                        }
-                                                    });
-                                                    newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
+                                                newbuilder.create();
+                                                newbuilder.show();
+                                            }
 
-                                                            Log.i("newrat", newrating.getRating()+" "+place.rating);
-                                                            mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
-                                                            mDatabase.child("users/"+Mail+"/"+lli+"/rating").setValue(lli);
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    newbuilder.create();
-                                                    newbuilder.show();
                                                 } else {
                                                     // User is signed out
                                                     Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
-                                                    dialog.cancel();
+                                                    //dialog.cancel();
                                                 }
                                                 // ...
 
@@ -222,7 +247,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapClick(final LatLng latLng){
                 if(onCheckPressed){
                     onCheckPressed=false;
-
+                    builder.setView(layout);
                     builder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -232,15 +257,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             String lli = formattedDouble.replace('.',',');
                             mDatabase.child("test/"+ lli).setValue(place);
                             if(Mail!="noname")
-                                mDatabase.child("users/"+Mail+"/"+lli).setValue(rating.getRating());
+                                mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
                             Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
-
+                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+                            startActivity(i);
+                            finish();
                             dialog.cancel();
                         }
                     });
                     builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+                            startActivity(i);
+                            finish();
                             dialog.cancel();
                         }
                     });

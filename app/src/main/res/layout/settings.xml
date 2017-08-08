@@ -51,7 +51,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="v2.2.pro"
+                android:text="v1.0"
                 android:textSize="17sp"/>
 
         </LinearLayout>
@@ -89,7 +89,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Войдите или зарегестрируйтесь в ОСМ"
+                android:text="Войдите или зарегестрируйтесь в Workout Map"
                 android:textSize="18sp"/>
 
         </LinearLayout>

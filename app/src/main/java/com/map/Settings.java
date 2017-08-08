@@ -89,8 +89,8 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                builder.setTitle("О версии").setMessage("Что нового в этой версии?\nСделали красиво, добавлена функция SmartScore - обучающаяся нейросеть, которая позволяет давать оценку состоянию организма более качественно.\n" +
-                        "Что ожидать в следующих версиях?\nFull bugfix").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setTitle("О версии").setMessage("Что нового в этой версии?\nЭто первая версия приложения!\n" +
+                        "Что ожидать в следующих версиях?\nНовые фичи").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
