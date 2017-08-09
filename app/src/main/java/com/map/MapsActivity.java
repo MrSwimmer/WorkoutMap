@@ -63,10 +63,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Ids.clear();
+        mainrel = (RelativeLayout) findViewById(R.id.mainrel);
+
         repeatPlace = false;
         setContentView(R.layout.activity_maps);
         Places = Main.places;
-        mainrel = (RelativeLayout) findViewById(R.id.mainrel);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -104,6 +106,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         };
+        newbuilder.create();
+        builder.create();
     }
     @Override
     public void onStart() {
@@ -164,14 +168,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 places.add(value);
 //
                             }
-                            for(int i=0; i<places.size(); i++){
-                                //Log.i("testrepeat", places.get(i));
-                                if(places.get(i).equals(lli)){
-                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
-                                    repeatPlace=true;
-                                    break;
-                                }
-                            }
+
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -179,12 +176,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
                     if(formattedDouble.equals(latLng)){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
                         builder.setTitle(place.name)
                                 .setMessage(place.about+"\nРейтинг: "+place.rating)
                                 .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        //mainrel.removeView(builder.);
+                                        //mainrel.removeView(builder.);
                                         dialog.cancel();
                                     }
                                 })
@@ -192,6 +191,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     @Override
                                     public void onClick(final DialogInterface dialog, int which) {
                                         if (user != null) {
+                                            for(int i=0; i<places.size(); i++){
+                                                //Log.i("testrepeat", places.get(i));
+                                                if(places.get(i).equals(lli)){
+                                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
+                                                    repeatPlace=true;
+                                                    break;
+                                                }
+                                            }
                                             if(!repeatPlace){
                                                 newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
                                                     @Override
@@ -201,40 +208,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                         mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
 //                                                            mainrel.removeView(layout);
 //                                                            mainrel.removeView(newlayout);
+                                                        //mainrel.removeView(newlayout);
                                                         dialog.cancel();
-                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-                                                        startActivity(i);
-                                                        finish();
+//                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+//                                                        startActivity(i);
+//                                                        finish();
                                                     }
                                                 });
                                                 newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
+                                                        mainrel.removeView(newlayout);
                                                         dialog.cancel();
-                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-                                                        startActivity(i);
-                                                        finish();
+//                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+//                                                        startActivity(i);
+//                                                        finish();
                                                     }
                                                 });
-
-                                                newbuilder.create();
                                                 newbuilder.show();
                                             }
-
-                                                } else {
-                                                    // User is signed out
-                                                    Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
-                                                    //dialog.cancel();
-                                                }
-                                                // ...
-
+                                            repeatPlace=false;
+                                        } else {
+                                            // User is signed out
+                                            Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
+                                            //dialog.cancel();
+                                        }
+                                        // ...
                                     }
                                 });
                         AlertDialog dialog = builder.create();
                         dialog.show();
                     }
                 }
-                    return false;
+                return false;
             }
         });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -259,22 +265,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if(Mail!="noname")
                                 mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
                             Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-                            startActivity(i);
-                            finish();
+//                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+//                            startActivity(i);
+//                            finish();
+                            //mainrel.removeView(layout);
                             dialog.cancel();
                         }
                     });
                     builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-                            startActivity(i);
-                            finish();
+//                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+//                            startActivity(i);
+//                            finish();
+                            //mainrel.removeView(layout);
                             dialog.cancel();
                         }
                     });
-                    builder.create();
+                    //builder.create();
                     builder.show();
 //                    final EditText edittext = new EditText(getApplicationContext());
 //                    edittext.setTextColor(Color.BLACK);
