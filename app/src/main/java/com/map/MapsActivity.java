@@ -58,7 +58,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     int num=1;
     boolean repeatPlace;
     ArrayList<String> Ids = new ArrayList<String>();
-    ArrayList<Place> Places = new ArrayList<Place>();
+    static ArrayList<Place> Places = new ArrayList<Place>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,16 +81,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 onCheckPressed=true;
             }
         });
-        inflater = getLayoutInflater();
-        layout = inflater.inflate(R.layout.new_place, null);
-        builder = new AlertDialog.Builder(this);
-        name = (EditText) layout.findViewById(R.id.name);
-        about = (EditText) layout.findViewById(R.id.about);
-        rating = (RatingBar) layout.findViewById(R.id.ratingBar);
-        newinflater = getLayoutInflater();
-        newlayout = newinflater.inflate(R.layout.new_mark, null);
-        newbuilder = new AlertDialog.Builder(this);
-        newrating = (RatingBar) newlayout.findViewById(R.id.newrating);
+//        inflater = getLayoutInflater();
+//        layout = inflater.inflate(R.layout.new_place, null);
+//        builder = new AlertDialog.Builder(this);
+//        name = (EditText) layout.findViewById(R.id.name);
+//        about = (EditText) layout.findViewById(R.id.about);
+//        rating = (RatingBar) layout.findViewById(R.id.ratingBar);
+//        newinflater = getLayoutInflater();
+//        newlayout = newinflater.inflate(R.layout.new_mark, null);
+//        newbuilder = new AlertDialog.Builder(this);
+//        newrating = (RatingBar) newlayout.findViewById(R.id.newrating);
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -106,8 +106,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         };
-        newbuilder.create();
-        builder.create();
+//        newbuilder.create();
+//        builder.create();
     }
     @Override
     public void onStart() {
@@ -141,12 +141,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         final long finish = System.currentTimeMillis();
         Log.i("fbase", finish-start+"");
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
             @Override
             public boolean onMarkerClick(Marker marker) {
-                newbuilder.setView(newlayout);
+//                newbuilder.setView(newlayout);
                 for(int i=0; i<Places.size(); i++){
                     final Place place = Places.get(i);
+
                     String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
                     double lan = marker.getPosition().latitude;
                     double lat = marker.getPosition().longitude;
@@ -176,68 +176,76 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
                     if(formattedDouble.equals(latLng)){
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-                        builder.setTitle(place.name)
-                                .setMessage(place.about+"\nРейтинг: "+place.rating)
-                                .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //mainrel.removeView(builder.);
-                                        //mainrel.removeView(builder.);
-                                        dialog.cancel();
-                                    }
-                                })
-                                .setNegativeButton("Добавить свою оценку", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(final DialogInterface dialog, int which) {
-                                        if (user != null) {
-                                            for(int i=0; i<places.size(); i++){
-                                                //Log.i("testrepeat", places.get(i));
-                                                if(places.get(i).equals(lli)){
-                                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
-                                                    repeatPlace=true;
-                                                    break;
-                                                }
-                                            }
-                                            if(!repeatPlace){
-                                                newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        Log.i("newrat", newrating.getRating()+" "+place.rating);
-                                                        mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
-                                                        mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
-//                                                            mainrel.removeView(layout);
-//                                                            mainrel.removeView(newlayout);
-                                                        //mainrel.removeView(newlayout);
-                                                        dialog.cancel();
-//                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-//                                                        startActivity(i);
-//                                                        finish();
-                                                    }
-                                                });
-                                                newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        mainrel.removeView(newlayout);
-                                                        dialog.cancel();
-//                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-//                                                        startActivity(i);
-//                                                        finish();
-                                                    }
-                                                });
-                                                newbuilder.show();
-                                            }
-                                            repeatPlace=false;
-                                        } else {
-                                            // User is signed out
-                                            Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
-                                            //dialog.cancel();
-                                        }
-                                        // ...
-                                    }
-                                });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
+                        //final AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                        /////////////////////////////////////////////////////////////////
+                        //String ratingf = new DecimalFormat("#0.0").format(place.rating);
+                        Intent viewPlace = new Intent(MapsActivity.this, ViewPlace.class);
+                        viewPlace.putExtra("num", i);
+                        viewPlace.putExtra("lli", lli);
+                        startActivity(viewPlace);
+                        break;
+                        //////////////////////////////////////////////////////////////////
+//                        builder.setTitle(place.name)
+//                                .setMessage(place.about+"\nРейтинг: "+ratingf)
+//                                .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        //mainrel.removeView(builder.);
+//                                        //mainrel.removeView(builder.);
+//                                        dialog.cancel();
+//                                    }
+//                                })
+//                                .setNegativeButton("Добавить свою оценку", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(final DialogInterface dialog, int which) {
+//                                        if (user != null) {
+//                                            for(int i=0; i<places.size(); i++){
+//                                                //Log.i("testrepeat", places.get(i));
+//                                                if(places.get(i).equals(lli)){
+//                                                    Toast.makeText(getApplicationContext(), "Вы уже ставили оценку этой площадке!", Toast.LENGTH_SHORT).show();
+//                                                    repeatPlace=true;
+//                                                    break;
+//                                                }
+//                                            }
+//                                            if(!repeatPlace){
+//                                                newbuilder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        Log.i("newrat", newrating.getRating()+" "+place.rating);
+//                                                        mDatabase.child("realese/"+ lli+"/rating").setValue((newrating.getRating()+place.rating)/2);
+//                                                        mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
+////                                                            mainrel.removeView(layout);
+////                                                            mainrel.removeView(newlayout);
+//                                                        //mainrel.removeView(newlayout);
+//                                                        dialog.cancel();
+////                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+////                                                        startActivity(i);
+////                                                        finish();
+//                                                    }
+//                                                });
+//                                                newbuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        mainrel.removeView(newlayout);
+//                                                        dialog.cancel();
+////                                                        Intent i = new Intent(MapsActivity.this, MapsActivity.class);
+////                                                        startActivity(i);
+////                                                        finish();
+//                                                    }
+//                                                });
+//                                                newbuilder.show();
+//                                            }
+//                                            repeatPlace=false;
+//                                        } else {
+//                                            // User is signed out
+//                                            Toast.makeText(getApplicationContext(), "Оценки может ставить только зарегестрированный пользователь. Войдите или зарегестрируйтесь в настройках", Toast.LENGTH_SHORT).show();
+//                                            //dialog.cancel();
+//                                        }
+//                                        // ...
+//                                    }
+//                                });
+//                        AlertDialog dialog = builder.create();
+//                        dialog.show();
                     }
                 }
                 return false;
@@ -253,70 +261,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onMapClick(final LatLng latLng){
                 if(onCheckPressed){
                     onCheckPressed=false;
-                    builder.setView(layout);
-                    builder.setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Place place = new Place(name.getText().toString(), about.getText().toString(), rating.getRating(), latLng.longitude, latLng.latitude);
-                            String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
-                            String Mail = email.replace('.', ',');
-                            String lli = formattedDouble.replace('.',',');
-                            mDatabase.child("test/"+ lli).setValue(place);
-                            if(Mail!="noname")
-                                mDatabase.child("users/"+Mail+"/"+lli).setValue(lli);
-                            Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
-//                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-//                            startActivity(i);
-//                            finish();
-                            //mainrel.removeView(layout);
-                            dialog.cancel();
-                        }
-                    });
-                    builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-//                            Intent i = new Intent(MapsActivity.this, MapsActivity.class);
-//                            startActivity(i);
-//                            finish();
-                            //mainrel.removeView(layout);
-                            dialog.cancel();
-                        }
-                    });
-                    //builder.create();
-                    builder.show();
-//                    final EditText edittext = new EditText(getApplicationContext());
-//                    edittext.setTextColor(Color.BLACK);
-//                    final AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-//                    alert.setMessage("Введите информативное название");
-//                    alert.setTitle("Новая площадка");
-//                    alert.setView(edittext);
-//                    alert.setPositiveButton("Отправить", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int whichButton) {
-//                            if(edittext.getText().toString()!=null){
-//                                Place place = new Place(edittext.getText().toString(), latLng.longitude, latLng.latitude);
-//                                String formattedDouble = new DecimalFormat("#0.00000").format(place.lat)+new DecimalFormat("#0.00000").format(place.lan);
-//                                String ll = place.lat+","+place.lan;
-//                                String lli = formattedDouble.replace('.',',');
-//                                mDatabase.child("test/"+ lli).setValue(place);
-//                                Toast.makeText(getApplicationContext(), "Спасибо! Мы рассмотрим ваше предложение.", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                    alert.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int whichButton) {
-//                        }
-//                    });
-//                    alert.show();
+                    ///////////////////////////////
+                    Intent dialogNewPlace = new Intent(MapsActivity.this, DialogNewPlace.class);
+                    dialogNewPlace.putExtra("lat",  latLng.latitude);
+                    dialogNewPlace.putExtra("lan",  latLng.longitude);
+                    Log.i("put", latLng.latitude+" "+latLng.longitude);
+                    startActivity(dialogNewPlace);
+                    ///////////////////////////////////
                 }
             }
         });
     }
-//    @Override
-//    public void onBackPressed()
-//    {
-//        super.onBackPressed();  // optional depending on your needs
-//        Intent i = new Intent(MapsActivity.this, Main.class);
-//        startActivity(i);
-//        overridePendingTransition(0,0);
-//    }
+
 }

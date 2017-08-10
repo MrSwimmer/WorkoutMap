@@ -32,6 +32,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="Карта"
+            android:parentActivityName=".Main"
             android:screenOrientation="portrait">
         </activity>
         <activity
@@ -67,9 +68,28 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ResetPass"
-                  android:parentActivityName=".LogInActivity"
-                  android:screenOrientation="portrait">>
+        <activity
+            android:name=".ResetPass"
+            android:parentActivityName=".LogInActivity"
+            android:screenOrientation="portrait">
+            >
+        </activity>
+        <activity
+            android:name=".DialogNewPlace"
+            android:label="Новая площадка"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog">
+        </activity>
+        <activity
+            android:name=".ViewPlace"
+            android:label="Площадка"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog">
+        </activity>
+        <activity android:name=".AddMark"
+                  android:label="Ваша оценка"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/Theme.AppCompat.Light.Dialog">
         </activity>
     </application>
 
